@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1 class="mb-6 text-2xl font-semibold tracking-tight">Kain na ta, Davao!</h1>
+<h1 class="mb-6 text-2xl font-semibold tracking-tight">Kaon na ta, Davao!</h1>
 
 <div class="mb-10 grid gap-4 sm:grid-cols-3">
     <div class="rounded-lg border bg-white p-4">
