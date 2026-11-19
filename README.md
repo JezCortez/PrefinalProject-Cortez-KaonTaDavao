@@ -1,58 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PrefinalProject-Cortez-KaonTaDavao
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Kaon Ta! Davao – Cortez's Food Guide**
+By Jez Cortez · 4-334 Full-Stack Web Development · Ateneo de Davao University
 
-## About Laravel
+A guide to carinderias and eateries in Davao City. Staff can list eateries by district with their business permit, dishes and features, and residents can leave reviews. Built with Laravel 12, SQLite, Blade and Tailwind v4 through Vite. There is no login, every page is public.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Setup
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+``` bash
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate:fresh --seed
+npm install
+npm run build
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## My data
 
-## Contributing
+- **Districts:** Poblacion, Talomo, Agdao, Buhangin, Toril, Bunawan
+- **Features:** Suki ni Cortez, Budget Meal, Halal, Open 24 Hours, Aircon, Free WiFi
+- **Users** (password `kaonta2026` for both): Jez Cortez (`cortez@kaonta.test`) and Tita Cortez (`tita.cortez@kaonta.test`), plus 10 factory users
+- **My eatery:** Carinderia ni Cortez (`carinderia-ni-cortez`), San Pedro St., Poblacion, Davao City, budget, specialty Tinolang Manok
+- **Permit:** DVO-2026-0531, expires 2027-05-31
+- **Dishes:** Tinolang Manok ₱85.00 (bestseller), Kinilaw na Tuna ₱120.00, Durian Shake ₱75.00
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Relationships
 
-## Code of Conduct
+| Relationship | Type | Why |
+| --- | --- | --- |
+| District → Eatery | hasMany / belongsTo | One district has many eateries, but each eatery sits in only one district. |
+| Eatery → Dish | hasMany / belongsTo | An eatery sells many dishes and each dish belongs to one eatery. |
+| Eatery → Review | hasMany / belongsTo | An eatery collects many reviews and each review is about one eatery. |
+| User → Review | hasMany / belongsTo | A reviewer can write many reviews, each written by one user. |
+| Eatery → Permit | hasOne / belongsTo | Each eatery has exactly one permit (unique `eatery_id`). |
+| Eatery ↔ Feature | belongsToMany | An eatery has several features and a feature (like Halal) is on many eateries, so they need the `eatery_feature` pivot. |
+| District → Review (through Eatery) | hasManyThrough | Reviews belong to eateries, not districts, so I count a district's reviews by going through its eateries. |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Routes
 
-## Security Vulnerabilities
+Output of `php artisan route:list --except-vendor`:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+``` bash
 
-## License
+ GET|HEAD / .. home › HomeController
+ GET|HEAD districts .. districts.index › DistrictController@index
+ GET|HEAD districts/{district} .. districts.show › DistrictController@show
+ GET|HEAD eateries .. eateries.index › EateryController@index
+ POST eateries .. eateries.store › EateryController@store
+ GET|HEAD eateries/create .. eateries.create › EateryController@create
+ GET|HEAD eateries/{eatery} .. eateries.show › EateryController@show
+ PUT|PATCH eateries/{eatery} .. eateries.update › EateryController@update
+ DELETE eateries/{eatery} .. eateries.destroy › EateryController@destroy
+ GET|HEAD eateries/{eatery}/edit .. eateries.edit › EateryController@edit
+ POST eateries/{eatery}/reviews .. eateries.reviews.store › ReviewController@store
+ GET|HEAD reviewers/{user} .. reviewers.show › ReviewerController@show
+ DELETE reviews/{review} .. reviews.destroy › ReviewController@destroy
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+ Showing [13] routes
+
+```
+
+## Screenshots
+
+- `screenshots/eatery-list.png`: the eatery list
+- `screenshots/eatery-page.png`: an eatery page with reviews
+- `screenshots/create-form-errors.png`: the create form showing validation errors
